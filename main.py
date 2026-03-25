@@ -16,7 +16,7 @@ if not os.path.exists("static/event_images"):
 AuthBase.metadata.create_all(bind=engine)
 EventBase.metadata.create_all(bind=eventEngine)
 
-app = FastAPI(title="BMT Event & Auth Service")
+app = FastAPI(title="Event & Auth Service")
 
 # statik dosyaları dışarıya açma
 app.mount("/static", StaticFiles(directory="static"), name="static")
