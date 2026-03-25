@@ -1,0 +1,12 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+*.db
+auth_app.db
+events.db
+static/event_images/*
+!static/event_images/.gitkeep
