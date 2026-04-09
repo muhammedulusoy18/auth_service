@@ -95,7 +95,7 @@ def get_me(current_user:UserResponse = Depends(get_current_user)):
     return current_user
 # KAYIT OLMA ADMİN
 @router.post("/registeradmin",response_model=UserResponse)
-def registeradmin(user_in: UserCreateAdmin, db: Session = Depends(get_db),current_user: UserResponse= Depends(get_current_user)):
+def register_admin(user_in: UserCreateAdmin, db: Session = Depends(get_db),current_user: UserResponse= Depends(get_current_user)):
 
     user_role=security.check_role({"role": current_user.role})
     if user_role==2:
