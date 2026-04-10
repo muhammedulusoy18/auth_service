@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-
+from app.core.email_service import send_reset_password_email
+from app.core.security import create_password_reset_token
 from app.db.database import get_db
-from app.schemas.user import UserCreate, UserResponse, UserCreateAdmin
+from app.schemas.user import UserCreate, UserResponse, UserCreateAdmin, ChangePassword
 from app.schemas.token import Token,TokenData
 from app.crud import user as user_crud
 from app.core import security
@@ -44,6 +45,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
     # Giriş başarılıysa Token'ları üret
     access_token = security.create_access_token(data={"sub": user.email,"role":user.role})
+
     refresh_token = security.create_refresh_token(data={"sub": user.email,"role":user.role})
 
     return {
@@ -112,4 +114,48 @@ def register_admin(user_in: UserCreateAdmin, db: Session = Depends(get_db),curre
             detail="yetkiniz yok."
         )
 
+
+@router.post("/forgettenpassword")      #mail gönderme
+def changepassword(email:str,db:Session=Depends(get_db)):
+    user=user_crud.check_mail(db, email=email)
+    if not user:
+        raise HTTPException(status_code=404,detail="Kullanıcı bulunamadı.")
+    token=create_password_reset_token(email=email)
+    send_reset_password_email(email,token)
+    return {"message": "Şifre sıfırlama maili başarıyla gönderildi."}
+
+@router.get("/resetpassword")       #token kontrol
+def reset_password(token:str):
+    try:
+        payload=jwt.decode(token,security.settings.SECRET_KEY,algorithms=[security.settings.ALGORITHM])
+        email:str=payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=403,detail="Geçersiz token içeriği")
+        return {"message":f"token onaylandı.{email} adresi için  şifre sıfırlaybilirsiniz"}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=403,detail="süresi geçmiş token.")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=403,detail="hatalı token.")
+
+@router.post("/resetpassword/") #şifre değiştirme
+def reset_password(request: ChangePassword,db: Session = Depends(get_db)):
+    try:
+        payload= jwt.decode(
+            request.token,
+            security.settings.SECRET_KEY,
+            algorithms=[security.settings.ALGORITHM])
+        email:str=payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=400,detail="Geçersiz token içeriği.")
+        user = user_crud.check_mail(db, email=email)
+        if not user:
+            raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
+        if(security.verify_password(request.new_password, user.hashed_password)):
+            raise HTTPException(status_code=400,detail="Eski şifre ve yeni şifre aynı olamaz")
+        user_crud.change_password(db, user=user,new_password=request.new_password)
+        return {"message": "Şifreniz başarıyla güncellendi. Artık yeni şifrenizle giriş yapabilirsiniz."}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=400, detail="Bu bağlantının süresi dolmuş .")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=400, detail="Hatalı token.")
 

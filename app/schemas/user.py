@@ -16,6 +16,9 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
     role: str
+class ChangePassword(BaseModel):
+    token: str
+    new_password: str
 
     class Config:
         from_attributes = True  # veritabanı modelini Pydantic şemasına  çeviriyoruz

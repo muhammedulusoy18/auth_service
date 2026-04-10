@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserResponse
 from app.core.security import get_password_hash
 
 
@@ -29,3 +29,11 @@ def create_user_admin(db: Session, user: UserCreate):
     db.refresh(db_user)
 
     return db_user
+def check_mail(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+def change_password(db: Session, user: User, new_password: str):
+    hashed_password = get_password_hash(new_password)
+    user.hashed_password = hashed_password
+    db.commit()
+    db.refresh(user)
+    return user

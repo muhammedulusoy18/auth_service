@@ -53,4 +53,10 @@ def check_role(data:dict):
 
 
         return score
+def create_password_reset_token(email:str):
+       to_encode= {
+            "sub":email,
+            "exp":  datetime.now() + timedelta(days=settings.PASSWORD_EXPIRE_TOKEN)}
 
+       encoded_jwt=jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+       return encoded_jwt
