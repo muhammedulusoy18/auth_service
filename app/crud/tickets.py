@@ -1,4 +1,6 @@
 from datetime import datetime
+
+import uuid
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.user import User
@@ -28,7 +30,8 @@ def create_ticket_purchase(db: Session, user_id: int, event_id: int,ticket_data:
             event_id=event_id,
             user_id=user_id,
             quantity=ticket_data.quantity,
-            purchase_date = datetime.utcnow()
+            purchase_date = datetime.utcnow(),
+            ticket_uuid=str(uuid.uuid4())
         )
         db.add(new_ticket)
         db.commit()
@@ -42,6 +45,7 @@ def create_ticket_purchase(db: Session, user_id: int, event_id: int,ticket_data:
         "event_name":event.event_name,
         "event_id":event.event_id,
         "ticket_id":new_ticket.ticket_id,
+        "ticket_uuid": new_ticket.ticket_uuid,
         "quantity":new_ticket.quantity,
         "purchase_date":new_ticket.purchase_date.strftime("%d/%m/%Y %H:%M")
     }

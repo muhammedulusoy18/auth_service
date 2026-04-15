@@ -1,5 +1,6 @@
+import uuid
 from app.db.eventsDb import Base
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, String
 class Tickets(Base):
 
     __tablename__ = "tickets"
@@ -8,3 +9,4 @@ class Tickets(Base):
     user_id=Column( Integer,nullable=False)
     purchase_date=Column(DateTime,nullable=False)
     quantity=Column(Integer,nullable=False)
+    ticket_uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True)
