@@ -1,13 +1,13 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import datetime
+from datetime import datetime,date,time
 from typing import Optional
 
 #ortak alanları içeren ana şema
 class EventBase(BaseModel):
     event_name: str
     description: Optional[str] = None
-    event_date: datetime
-    event_time: datetime
+    event_date: date
+    event_time: time
     quota: int = 0
     image_url: Optional[str] = None
     seating_arrangement_url: Optional[str] = None

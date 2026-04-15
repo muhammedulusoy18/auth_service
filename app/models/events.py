@@ -1,7 +1,7 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime,Float
+from sqlalchemy import Column, Integer, String, DateTime, Float, Date, Time
 from app.db.eventsDb import Base
-from app.models.user import User
+
 class Events(Base):
     __tablename__ = "events"
     event_id=Column(Integer, primary_key=True,index=True)
@@ -9,8 +9,8 @@ class Events(Base):
     creator_id=Column(Integer,index=True)
     image_url=Column(String,index=True)
     description=Column(String,index=True)
-    event_date=Column(DateTime,index=True)
-    event_time=Column(DateTime,index=True)
+    event_date=Column(Date,index=True)
+    event_time=Column(Time,index=True)
     created_at=Column(DateTime,index=True,default=datetime.utcnow)
     quota=Column(Integer,index=True,default=0,nullable=False)
     seating_arrangement_url=Column(String,index=True)

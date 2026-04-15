@@ -51,10 +51,10 @@ async def share_event(
 
     #tarih ve saat dönüşümü
     try:
-        date_obj = datetime.strptime(event_date, "%d-%m-%Y")
-        time_obj = datetime.strptime(event_time, "%H:%M")
+        date_obj = datetime.strptime(event_date, "%d-%m-%Y").date()
+        time_obj = datetime.strptime(event_time, "%H:%M").time()
     except ValueError:
-        raise HTTPException(status_code=400, detail="Tarih(YYYY-MM-DD) veya Saat(HH:MM) formatı yanlış.")
+        raise HTTPException(status_code=400, detail="Tarih(DD-MM-YYYY) veya Saat(HH:MM) formatı yanlış.")
 
     # şemayı oluştur ve CRUD'a Gönder
     event_in = EventCreate(

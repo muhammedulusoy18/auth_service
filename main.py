@@ -3,10 +3,11 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from app.models.user import User
 from app.models.events import Events
+from app.models.tickets import Tickets
 from app.db.database import engine, Base as AuthBase
-from app.db.eventsDb import engine as eventEngine, Base as EventBase
+from app.db.eventsDb import engine as eventEngine, Base as EventBase, Base
 
-from app.api import auth, events
+from app.api import auth, events,tickets
 
 # klasör kontrolü
 if not os.path.exists("static/event_images"):
@@ -23,6 +24,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(auth.router)
 app.include_router(events.router)
+app.include_router(tickets.router)
 
 @app.get("/")
 def read_root():
