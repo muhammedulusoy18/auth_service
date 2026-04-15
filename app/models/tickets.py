@@ -1,4 +1,5 @@
 import uuid
+from sqlalchemy.orm import relationship
 from app.db.eventsDb import Base
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Boolean
 
@@ -13,3 +14,4 @@ class Tickets(Base):
     quantity=Column(Integer,nullable=False)
     ticket_uuid = Column(String, default=lambda: str(uuid.uuid4()), unique=True)
     is_used=Column(Boolean,default=False)
+    event = relationship("Events", back_populates="tickets")

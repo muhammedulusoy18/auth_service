@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Float, Date, Time
+from sqlalchemy.orm import relationship
 from app.db.eventsDb import Base
 
 class Events(Base):
@@ -17,5 +18,6 @@ class Events(Base):
     latitude=Column(Float,nullable=False)
     longitude= Column(Float,nullable=False)
     city_name=Column(String,nullable=False)
+    tickets = relationship("Tickets", back_populates="event")
 
 

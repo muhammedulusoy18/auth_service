@@ -1,7 +1,8 @@
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.auth import get_current_user
-from app.schemas.tickets import TicketPurchaseCreate
+from app.schemas.tickets import TicketPurchaseCreate, TicketResponse
 from app.crud.tickets import create_ticket_purchase
 from app.models.user import User
 from app.db.eventsDb import get_Eventdb
@@ -46,3 +47,9 @@ def validate_ticket(
         ticket.is_used = True
         db.commit()
         return {"message": "Bilet başarıyla doğrulandı. Giriş yapabilirsiniz!", "ticket_id": ticket.ticket_id}
+@router.get("/my",response_model=List[TicketResponse])
+def get_my_tickets(db: Session = Depends(get_Eventdb), current_user: User = Depends(get_current_user)):
+    my_tickets=db.query(Tickets).filter(Tickets.user_id == current_user.id).all()
+    if not my_tickets:
+        return []
+    return my_tickets

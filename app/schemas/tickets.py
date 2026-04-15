@@ -1,7 +1,7 @@
 from datetime import datetime
-
-from pydantic import BaseModel,Field
-from sqlalchemy import Boolean
+from typing import Optional
+from app.schemas.events import EventResponse, EventShort
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TicketPurchaseCreate(BaseModel):
@@ -10,7 +10,8 @@ class TicketResponse(BaseModel):
     ticket_id: int
     event_id: int
     quantity: int
-    is_ude: bool
+    is_used: bool
     purchase_date: datetime
-    class config:
-        orm_mode = True
+    event: Optional[EventShort] = None
+    model_config = ConfigDict(from_attributes=True)
+

@@ -4,7 +4,7 @@ from geopy.geocoders import Nominatim
 from fastapi import HTTPException
 from datetime import datetime
 from app.models.events import Events
-from app.schemas.event import EventCreate
+from app.schemas.events import EventCreate
 
 
 

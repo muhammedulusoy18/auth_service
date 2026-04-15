@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.db.eventsDb import get_Eventdb
 from app.api.auth import get_current_user
 from app.schemas.user import UserResponse
-from app.schemas.event import EventCreate, EventResponse
+from app.schemas.events import EventCreate, EventResponse
 from app.crud import event as crud_event
 from app.core import security
 

@@ -32,3 +32,11 @@ class NearbySearch(BaseModel):
     user_lat: float
     user_lon: float
     radius_km: float = 10.0
+class EventShort(BaseModel):
+    event_name: str
+    description: Optional[str] = None
+    event_date: date
+    event_time: time
+    city_name: str
+    image_url: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
