@@ -81,7 +81,6 @@ def send_ticket_confirmation_mail(email_to:str,ticket_data:dict):
         </html>
         """
     msg.attach(MIMEText(html, "html"))
-    msg.attach(MIMEText(html, "html"))
     msg.attach(qr_image)
     with smtplib.SMTP(settings.MAIL_SERVER,settings.MAIL_PORT) as server:
         server.starttls()

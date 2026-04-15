@@ -1,7 +1,8 @@
 from datetime import datetime
 
+import background_tasks
 import uuid
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.core.email_service import send_ticket_confirmation_mail
@@ -11,7 +12,7 @@ from app.models.tickets import Tickets
 from app.db.database import SessionLocal
 
 
-def create_ticket_purchase(db: Session, user_id: int, event_id: int,ticket_data:TicketPurchaseCreate):
+def create_ticket_purchase(background_tasks: BackgroundTasks, db: Session, user_id: int, event_id: int,ticket_data:TicketPurchaseCreate):
     user_email = None
     with SessionLocal() as auth_db:
         user = auth_db.query(User).filter(User.id == user_id).first()
@@ -30,7 +31,7 @@ def create_ticket_purchase(db: Session, user_id: int, event_id: int,ticket_data:
             event_id=event_id,
             user_id=user_id,
             quantity=ticket_data.quantity,
-            purchase_date = datetime.utcnow(),
+            purchase_date = datetime.now(),
             ticket_uuid=str(uuid.uuid4())
         )
         db.add(new_ticket)
@@ -49,8 +50,5 @@ def create_ticket_purchase(db: Session, user_id: int, event_id: int,ticket_data:
         "quantity":new_ticket.quantity,
         "purchase_date":new_ticket.purchase_date.strftime("%d/%m/%Y %H:%M")
     }
-    try:
-         send_ticket_confirmation_mail(user.email,ticket_info)
-    except Exception as e:
-        print(f"Mail gönderilirken {e} hatası oluştu")
+    background_tasks.add_task(send_ticket_confirmation_mail, user_email, ticket_info)
     return new_ticket

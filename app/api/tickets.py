@@ -1,8 +1,8 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.api.auth import get_current_user
-from app.models.events import Events
+
 from app.schemas.tickets import TicketPurchaseCreate, TicketResponse
 from app.crud.tickets import create_ticket_purchase
 from app.models.user import User
@@ -20,6 +20,7 @@ router = APIRouter(
 def buy_ticket(
     event_id: int,
     ticket_data: TicketPurchaseCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_Eventdb),
     current_user: User = Depends(get_current_user) ):
     user_id= current_user.id
@@ -28,7 +29,8 @@ def buy_ticket(
         db=db,
         event_id=event_id,
         user_id=user_id,
-        ticket_data=ticket_data
+        ticket_data=ticket_data,
+        background_tasks=background_tasks
     )
 
     return purchased_ticket
